@@ -60,8 +60,6 @@ public class Responsi {
         };
 
         // --- BINDING EVENT LISTENERS (LOGIKA MVP) ---
-
-      
         view.onAdd(e -> {
             String name = view.getNameInput();
             String priceStr = view.getPriceInput();
