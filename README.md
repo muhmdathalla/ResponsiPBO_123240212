@@ -102,6 +102,7 @@ CREATE TABLE `cart_items` (
 ```
 
 Database dan tabelnya dibuat otomatis waktu aplikasi pertama kali dijalankan.
+Database pun sudah di export
 
 ## Cara menjalankan
 
