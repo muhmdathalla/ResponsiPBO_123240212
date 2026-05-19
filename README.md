@@ -1,6 +1,6 @@
 # Responsi PBO - Keranjang Belanja
 
-## Apa yang saya kerjakan
+## Muhammad Athalla Bagaskara - 123240212 - IF E
 
 Saya menambahkan koneksi ke database MySQL supaya data keranjang tidak hilang waktu aplikasi ditutup. Selain itu saya juga menambahkan diskon Event 12.12 sebesar 12% dari subtotal.
 
