@@ -1,111 +1,36 @@
-# Responsi PBO - Keranjang Belanja
+> 1. Server hardware adalah mesin komputer berspesifikasi tinggi yang sengaja dinyalakan terus-menerus tanpa henti. Komputer ini berfungsi sebagai wadah fisik untuk menampung semua data.
+>    Server sebagai software adalah aplikasi mesin komputer yang berjalan di dalam komputer tersebut dan bekerja di latar belakang untuk merespons dan mengirimkan data yang diminta oleh user.
 
-## Muhammad Athalla Bagaskara - 123240212 - IF E
+> 2. Tanggung jawab operasional seorang sysadmin antara lain:
+    - Mengelola server dan sistem operasi
+    Contohnya melakukan instalasi, konfigurasi, serta memastikan server berjalan dengan baik. Contohnya menginstal dan mengatur Ubuntu Server untuk menjalankan website.
+    - Melakukan monitoring sistem dan jaringan
+    Contohnya memantau penggunaan CPU, RAM, storage, serta kondisi jaringan. Contohnya mengecek penggunaan resource server agar tidak mengalami overload.
+    - Melakukan backup dan pemulihan data
+    Contohnya memastikan data penting memiliki salinan dan dapat dikembalikan jika terjadi kerusakan. Contohnya melakukan backup database secara rutin dan melakukan restore ketika data mengalami masalah.
+    - Menjaga keamanan sistem
+    Contohnya mengatur firewall, hak akses user, serta melakukan update keamanan. Contohnya membatasi port yang dapat diakses dari internet dan memperbarui sistem untuk menutup celah keamanan.
+    - Menangani troubleshooting dan gangguan sistem
+    Contohnya mencari penyebab dan memperbaiki masalah yang terjadi pada server maupun jaringan. Contohnya memperbaiki server yang tidak dapat diakses karena service mengalami error.
 
-Saya menambahkan koneksi ke database MySQL supaya data keranjang tidak hilang waktu aplikasi ditutup. Selain itu saya juga menambahkan diskon Event 12.12 sebesar 12% dari subtotal.
+> 3. Saya memilih startup sebagai jenis organisasi. Menurut saya, startup lebih cocok menggunakan cloud karena startup biasanya membutuhkan infrastruktur yang fleksibel, mudah dikembangkan, dan tidak memerlukan biaya besar untuk membeli serta merawat server sendiri.
+    - Cloud lebih fleksibel
+    Contohnya kapasitas server dapat ditambah atau dikurangi sesuai kebutuhan. Ketika jumlah pengguna aplikasi meningkat, startup dapat meningkatkan kapasitas server tanpa harus membeli perangkat baru.
+    - Biaya lebih efisien
+    Contohnya startup tidak perlu mengeluarkan modal besar untuk membeli server, rak, listrik, dan perangkat jaringan.
+    - Mudah dikembangkan
+    Contohnya layanan cloud menyediakan berbagai layanan seperti database, penyimpanan, dan server yang dapat digunakan sesuai kebutuhan.
+    - Mendukung kerja jarak jauh
+    Contohnya sistem dan layanan dapat diakses oleh tim dari berbagai lokasi selama memiliki koneksi internet.
+    - Memudahkan backup dan pemulihan
+    Contohnya data dan sistem dapat menggunakan layanan backup yang tersedia pada cloud.
 
-Pola arsitektur yang saya pakai adalah **MVP (Model-View-Presenter)**. `CartView` hanya urusin tampilan, logika bisnisnya ada di `Responsi.java` sebagai presenter, dan data diakses lewat `CartRepository`.
-
-## Struktur Folder
-
-```
-src/main/java/com/pbo/responsi/
-├── Responsi.java                        # entry point (dimodifikasi)
-├── database/
-│   └── DatabaseConnection.java          # koneksi MySQL (baru)
-├── dto/
-│   └── CartItemDTO.java
-├── model/
-│   ├── CartRepository.java              # interface
-│   └── FakeCartRepository.java
-├── repository/
-│   └── MySQLCartRepository.java         # implementasi MySQL (baru)
-├── service/
-│   ├── DiscountStrategy.java            # interface
-│   ├── NoDiscountStrategy.java
-│   └── EventDiscountStrategy.java       # diskon 12% (baru)
-└── view/
-    └── CartView.java
-```
-
-## File yang saya tambahkan
-
-### `database/DatabaseConnection.java`
-
-Singleton untuk manajemen koneksi MySQL. Database dan tabel dibuat otomatis kalau belum ada.
-
-```java
-public static DatabaseConnection getInstance() {
-    if (instance == null) {
-        instance = new DatabaseConnection();
-    }
-    return instance;
-}
-```
-
-### `repository/MySQLCartRepository.java`
-
-Implementasi `CartRepository` yang menyimpan data ke MySQL lewat JDBC, menggantikan `FakeCartRepository`.
-
-```java
-public void save(CartItemDTO item) {
-    String sql = "INSERT INTO cart_items (name, price, quantity) VALUES (?, ?, ?)";
-    try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
-        ps.setString(1, item.getName());
-        ps.setDouble(2, item.getPrice());
-        ps.setInt(3, item.getQuantity());
-        ps.executeUpdate();
-    } catch (SQLException e) {
-        System.err.println("Error save: " + e.getMessage());
-    }
-}
-```
-
-### `service/EventDiscountStrategy.java`
-
-Implementasi `DiscountStrategy` untuk diskon Event 12.12 sebesar 12%, menggantikan `NoDiscountStrategy`.
-
-```java
-public double calculateDiscount(double totalAmount) {
-    return totalAmount * 0.12;
-}
-
-public String getDiscountName() {
-    return "Event 12.12 (12%)";
-}
-```
-
-### Perubahan di `Responsi.java`
-
-Hanya mengganti implementasi yang dipakai:
-
-```java
-// Sebelum
-CartRepository repository = new FakeCartRepository();
-DiscountStrategy discountStrategy = new NoDiscountStrategy();
-
-// Sesudah
-CartRepository repository = new MySQLCartRepository();
-DiscountStrategy discountStrategy = new EventDiscountStrategy();
-```
-
-## DDL Database
-
-```sql
-CREATE TABLE `cart_items` (
-    `id`         INT AUTO_INCREMENT PRIMARY KEY,
-    `name`       VARCHAR(255) NOT NULL UNIQUE,
-    `price`      DOUBLE NOT NULL,
-    `quantity`   INT NOT NULL DEFAULT 1,
-    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-```
-
-Database dan tabelnya dibuat otomatis waktu aplikasi pertama kali dijalankan.
-Database pun sudah di export
-
-## Cara menjalankan
-
-1. Pastikan MySQL sudah nyala
-1. Sesuaikan `DB_PASS` di `DatabaseConnection.java` dengan password MySQL kamu (default kosong)
-1. Buka project di NetBeans, Clean and Build, lalu Run
+> 4. Salah satu insiden infrastruktur TI dalam 12 bulan terakhir adalah gangguan layanan cloudflare pada 18 November 2025 yang menyebabkan banyak website dan layanan internet mengalami gangguan atau tidak dapat diakses. Gangguan tersebut terjadi karena adanya masalah pada sistem internal Cloudflare yang berdampak pada layanan yang menggunakan infrastrukturnya.
+    - Penyebab
+    Gangguan berasal dari masalah pada sistem internal Cloudflare yang menyebabkan komponen penting dalam infrastrukturnya mengalami kegagalan dan berdampak pada berbagai layanan yang bergantung pada Cloudflare.
+    - Dampak
+    Banyak website dan layanan online mengalami error atau tidak dapat diakses untuk sementara waktu karena menggunakan layanan Cloudflare.
+    - Hubungan dengan sysadmin
+    Sysadmin memiliki peran penting dalam mencegah dan menangani kejadian seperti ini dengan melakukan monitoring infrastruktur, menyediakan sistem backup atau failover, memantau log, serta memastikan konfigurasi layanan tetap aman dan dapat dipulihkan ketika terjadi gangguan.
+    - Pelajaran
+    Insiden tersebut menunjukkan bahwa infrastruktur TI harus memiliki monitoring yang baik, mekanisme redundansi, backup, serta rencana pemulihan agar gangguan pada satu komponen tidak menyebabkan layanan berhenti sepenuhnya.
